@@ -6,6 +6,8 @@ using System.Net.Http.Headers;
 using System.Web.Http;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Serialization;
+using System.Web.Http.Cors;
+using Newtonsoft.Json;
 
 namespace web_api_v1
 {
@@ -15,6 +17,9 @@ namespace web_api_v1
         {
             // Web API configuration and services
             // Configure Web API to use only bearer token authentication.
+            var settings = config.Formatters.JsonFormatter.SerializerSettings;
+            settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            settings.Formatting = Formatting.Indented;
             config.SuppressDefaultHostAuthentication();
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
 
@@ -27,6 +32,8 @@ namespace web_api_v1
                 defaults: new { id = RouteParameter.Optional }
             );
             config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+
+            config.EnableCors(new EnableCorsAttribute("*", "*", "*"));
         }
     }
 }
